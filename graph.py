@@ -4,8 +4,7 @@ import traceback
 import copy
 
 class Value(object):
-    def __init__(self, type = None, value = None, depends = None):
-        self.type = type
+    def __init__(self, value = None, depends = None):
         self.value = value
         self.depends = depends
 
@@ -15,8 +14,8 @@ class Value(object):
         return True
 
 class Process(object):
-    inputs = {} #Name : Type
-    outputs = {} #Name : Type
+    inputs = [] #Names
+    outputs = [] #Names
     result = {}
 
     def __init__(self):
@@ -29,8 +28,8 @@ class Process(object):
 class Node(object):
     def __init__(self, process = None, inputs = {}, outputs = {}):
         self.process = process
-        self.inputs = inputs #Name : Node
-        self.outputs = outputs #Name : Node
+        self.inputs = inputs #Name : Value
+        self.outputs = outputs #Name : Value
 
         self._done = False #Set to true after this runs
         self._running = False
@@ -77,12 +76,6 @@ class Node(object):
                                   'Process %s. Missing $s.' % \
                                   (self.process, okeys -vkeys))
             for i in okeys:
-                if not isinstance(value[i], self.outputs[i].type):
-                    self._error = True
-                    self._running = False
-                    raise TypeError('Expected outpus %s of Process %s to be' \
-                            'of type %s, got %s instead.' % \
-                            (i, self.process, self.outputs[i].type, value[i]))
                 self.outputs[i].value = value[i]
             self._done = True
             self.result = value
@@ -92,7 +85,7 @@ class Node(object):
         else:
             #check if all our inputs are ready
             if not self.ready():
-                return false
+                return False
 
             inputs = {}
             for i in self.inputs.keys():

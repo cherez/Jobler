@@ -3,15 +3,15 @@ import graph
 import traceback
 
 class Add(graph.Process):
-    inputs = {'first':int, 'second':int}
-    outputs = {'result':int}
+    inputs = ['first', 'second']
+    outputs = ['result']
     @staticmethod
     def execute(first, second):
         yield {'result':first+second}
 
 class Multiply(graph.Process):
-    inputs = {'first':int, 'second':int}
-    outputs = {'result':int}
+    inputs = ['first', 'second']
+    outputs = ['result']
     @staticmethod
     def execute(first, second):
         yield {'result':first*second}
@@ -19,9 +19,9 @@ class Multiply(graph.Process):
 def test_basics():
     g = graph.Graph()
     a = Add()
-    first = graph.Value(int, 1)
-    second = graph.Value(int, 2)
-    result = graph.Value(int)
+    first = graph.Value(1)
+    second = graph.Value(2)
+    result = graph.Value()
     n = graph.Node(a, {'first':first, 'second':second}, {'result':result})
     g.add_node(n)
     while g.execute():
@@ -35,9 +35,9 @@ def test_basics():
 def test_reduce_values():
     g = graph.Graph()
     m = Multiply()
-    first = graph.Value(int, 1)
-    second = graph.Value(int, 1)
-    result = graph.Value(int)
+    first = graph.Value(1)
+    second = graph.Value(1)
+    result = graph.Value()
     n = graph.Node(m, {'first':first, 'second':second}, {'result':result})
     g.add_node(n)
     g.reduce_values()
@@ -63,10 +63,10 @@ def test_reduce_values():
 def test_reduce_nodes():
     g = graph.Graph()
     m = Multiply()
-    first = graph.Value(int, 1)
-    second = graph.Value(int, 1)
+    first = graph.Value(1)
+    second = graph.Value(1)
     for i in xrange(4):
-        result = graph.Value(int)
+        result = graph.Value()
         n = graph.Node(m, {'first':first, 'second':second}, {'result':result})
         g.add_node(n)
     g.reduce_nodes()
@@ -80,9 +80,9 @@ def test_reduce():
     g = graph.Graph()
     m = Multiply()
     for i in xrange(4):
-        first = graph.Value(int, 1)
-        second = graph.Value(int, 1)
-        result = graph.Value(int)
+        first = graph.Value(1)
+        second = graph.Value(1)
+        result = graph.Value()
         n = graph.Node(m, {'first':first, 'second':second}, {'result':result})
         g.add_node(n)
     g.reduce()
