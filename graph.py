@@ -47,7 +47,7 @@ class Node(object):
         #if we have a generator, then we've started; poll it to see if it's done
         if self._running:
             try:
-                value = self._generator.next()
+                value = next(self._generator)
             except:
                 self._error = True
                 self._running = False
@@ -127,7 +127,7 @@ class Graph(object):
         if node in self.nodes:
             return False
         self.nodes.append(node)
-        for i in node.inputs.values() + node.outputs.values():
+        for i in list(node.inputs.values()) + list(node.outputs.values()):
             if i not in self.values:
                 self.values.append(i)
         return True
@@ -162,7 +162,7 @@ class Graph(object):
                 repeats[i] = values[i.value]
 
         #replace all repeats with just one of the values
-        for copy, orig in repeats.iteritems():
+        for copy, orig in repeats.items():
             self._merge_values(orig, copy)
         return bool(repeats)
 
