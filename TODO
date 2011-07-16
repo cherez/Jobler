@@ -1,0 +1,15 @@
+Subgraphs:
+Nodes that actually represent entire graphs.
+A way to expand them in-place.
+
+Metaprocessing:
+Figure out the best way to pass processes through the graph, and some sort of apply mechanism.
+
+Visualization:
+Display a graph visually. Maybe output graphviz files?
+
+Add new tactics:
+Something to store results in a database?
+
+Write some examples:
+Perhaps a make-like build system? 
