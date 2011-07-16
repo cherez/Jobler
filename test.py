@@ -1,5 +1,5 @@
 #!/bin/env python
-import graph
+import graph, tactics
 import traceback
 
 class Add(graph.Process):
@@ -24,7 +24,7 @@ def test_basics():
     result = graph.Value()
     n = graph.Node(a, {'first':first, 'second':second}, {'result':result})
     g.add_node(n)
-    while g.execute():
+    while tactics.execute(g):
         pass
     if result.value != 3:
         print('1 + 2 = %s ?' % result.value)
@@ -40,19 +40,19 @@ def test_reduce_values():
     result = graph.Value()
     n = graph.Node(m, {'first':first, 'second':second}, {'result':result})
     g.add_node(n)
-    g.reduce_values()
+    tactics.reduce_values(g)
     if len(g.values) != 2:
         print('Incorrect number of values after reduce_values. '\
                 'Expected 2, got %s' % len(g.values))
         traceback.print_stack()
         return False
-    while g.execute():
+    while tactics.execute(g):
         pass
     if result.value != 1:
         print('1 * 1 = %s ?' % result.value)
         traceback.print_stack()
         return False
-    g.reduce_values()
+    tactics.reduce_values(g)
     if len(g.values) != 1:
         print('Incorrect number of values after reduce_values. ' \
                 'Expected 1, got %s' % len(g.values))
@@ -69,7 +69,7 @@ def test_reduce_nodes():
         result = graph.Value()
         n = graph.Node(m, {'first':first, 'second':second}, {'result':result})
         g.add_node(n)
-    g.reduce_nodes()
+    tactics.reduce_nodes(g)
     if len(g.nodes) != 1:
         print('Incorrect number of nodes after reduce_nodes. ' \
                 'Expected 1, got %s' % len(g.nodes))
@@ -86,7 +86,7 @@ def test_reduce():
         result = graph.Value()
         n = graph.Node(m, {'first':first, 'second':second}, {'result':result})
         g.add_node(n)
-    g.reduce()
+    tactics.reduce(g)
     if len(g.nodes) != 1:
         print('Incorrect number of nodes after reduce. '\
                 'Expected 1, got %s' % len(g.nodes))
@@ -98,8 +98,6 @@ def test_reduce():
         for i in g.values:
             print(i.value, i.depends)
         return False
-    while g.execute():
-        pass
     return True
 
 def test():

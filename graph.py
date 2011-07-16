@@ -1,7 +1,5 @@
 import types
-import sys
 import traceback
-import copy
 
 class Value(object):
     def __init__(self, value = None, depends = None):
@@ -40,6 +38,7 @@ class Node(object):
             i.depends = self
 
     def execute(self):
+        #perhaps this should be moved into tactics?
         if self._done:
             return True
         if self._error:
@@ -131,55 +130,6 @@ class Graph(object):
             if i not in self.values:
                 self.values.append(i)
         return True
-
-    def execute(self):
-        ready = [i for i in self.nodes if i.ready()]
-        if not ready:
-            return False
-        for i in ready:
-                i.execute()
-
-        return True
-
-    def reduce(self):
-        reduced = False
-        #keep reducing as long as we make progress
-        #this should only happen once, but I haven't tried to prove it
-        while self.reduce_values() or self.reduce_nodes():
-            reduced = True
-        return reduced
-
-    def reduce_values(self):
-        values = {}
-        repeats = {}
-        #find every set of equal values that are calculated
-        for i in self.values:
-            if not i.ready():
-                continue
-            if i.value not in values:
-                values[i.value] = i
-            else:
-                repeats[i] = values[i.value]
-
-        #replace all repeats with just one of the values
-        for copy, orig in repeats.items():
-            self._merge_values(orig, copy)
-        return bool(repeats)
-
-    def reduce_nodes(self):
-        remaining = []
-        #since we'll be deleting as we go, we need to iterate a copy
-        for i in copy.copy(self.nodes):
-            for j in remaining:
-                if i == j:
-                    self._merge_nodes(j, i)
-                    break
-            else:
-                remaining.append(i)
-        if len(remaining) != len(self.nodes):
-            self.nodes[:] = remaining
-            return True
-        return False
 
     def _merge_values(self, orig, copy):
         for i in self.nodes:
